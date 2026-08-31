@@ -1,0 +1,443 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║          NONROOTVPS - GitHub to Railway Deployment Guide                      ║
+║                          (Complete Step-by-Step)                              ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+🚀 QUICK OVERVIEW
+═════════════════════════════════════════════════════════════════════════════════
+
+This package contains EVERYTHING you need to deploy NONROOTVPS to Railway.app via GitHub.
+
+Files included:
+✓ Dockerfile          - Container configuration for Railway
+✓ railway.json        - Railway deployment settings
+✓ .gitignore         - Security (prevents secrets from leaking)
+✓ README.md          - Full documentation
+✓ DEPLOY.sh          - Quick deploy script
+✓ NONROOTVPS/        - Your complete application code
+✓ requirements.txt   - Python dependencies (pre-configured)
+
+
+═════════════════════════════════════════════════════════════════════════════════
+STEP-BY-STEP GUIDE
+═════════════════════════════════════════════════════════════════════════════════
+
+STEP 1️⃣: Create GitHub Account & Repository
+───────────────────────────────────────────────────────────────────────────────
+
+If you don't have GitHub account:
+  1. Go to https://github.com
+  2. Click "Sign up"
+  3. Create account (use your email)
+  4. Verify email
+
+Create new repository:
+  1. Go to https://github.com/new
+  2. Repository name: nonrootvps-railway
+  3. Description: NoRoot Mod Proxy - Railway Deployment
+  4. Select "Public" (Railway needs to access it)
+  5. Click "Create repository"
+
+After creation, you'll see:
+  git remote add origin https://github.com/YOUR_USERNAME/nonrootvps-railway.git
+  git branch -M main
+  git push -u origin main
+
+
+STEP 2️⃣: Prepare Your Local Machine
+───────────────────────────────────────────────────────────────────────────────
+
+Install Git (if not already installed):
+  
+  Windows: https://git-scm.com/download/win
+  Mac: brew install git
+  Linux: apt install git
+
+Verify Git installation:
+  git --version
+
+Configure Git (first time only):
+  git config --global user.email "your@email.com"
+  git config --global user.name "Your Name"
+
+
+STEP 3️⃣: Clone Repository to Your Machine
+───────────────────────────────────────────────────────────────────────────────
+
+Open terminal/PowerShell and run:
+
+  git clone https://github.com/YOUR_USERNAME/nonrootvps-railway.git
+  cd nonrootvps-railway
+
+You should now have a folder with these files:
+  nonrootvps-railway/
+  ├── Dockerfile
+  ├── railway.json
+  ├── .gitignore
+  ├── README.md
+  ├── README_KANNADA.md
+  ├── DEPLOY.sh
+  ├── GITHUB_RAILWAY_SETUP.txt (this file)
+  └── NONROOTVPS/
+      ├── main.py
+      ├── requirements.txt
+      ├── ifix.config.json
+      └── ... (other files)
+
+
+STEP 4️⃣: Add All Files to Git
+───────────────────────────────────────────────────────────────────────────────
+
+In your terminal (in the nonrootvps-railway folder):
+
+  git add .
+  git commit -m "Initial NONROOTVPS Railway deployment"
+  git push origin main
+
+You should see:
+  ✓ Files uploaded to GitHub
+  ✓ Repository updated
+
+Verify in browser:
+  Go to https://github.com/YOUR_USERNAME/nonrootvps-railway
+  You should see all files listed
+
+
+STEP 5️⃣: Create Railway Account
+───────────────────────────────────────────────────────────────────────────────
+
+1. Go to https://railway.app
+2. Click "Sign up"
+3. Select "Sign up with GitHub" (easiest)
+4. Authorize Railway to access GitHub
+5. Complete onboarding (you can skip questions if wanted)
+
+You're now ready to deploy!
+
+
+STEP 6️⃣: Deploy to Railway
+───────────────────────────────────────────────────────────────────────────────
+
+Option A: Using Railway Dashboard (Recommended)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Go to https://railway.app/dashboard
+  2. Click "New Project"
+  3. Click "GitHub Repo"
+  4. Search for "nonrootvps-railway"
+  5. Click to select it
+  6. Click "Deploy"
+  
+  Wait 2-5 minutes while Railway builds and deploys.
+
+
+Option B: Using Railway CLI (Advanced)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  npm install -g @railway/cli
+  railway login
+  railway link
+  railway up
+
+
+STEP 7️⃣: Set Environment Variables
+───────────────────────────────────────────────────────────────────────────────
+
+In Railway Dashboard:
+
+  1. Click your project (nonrootvps-railway)
+  2. Go to "Variables" tab
+  3. Click "Add Variable"
+  4. Add these (one by one):
+
+     ┌─────────────────────────────────────────┐
+     │ PORT         │ 8089                      │
+     ├─────────────────────────────────────────┤
+     │ RAILWAY_HOST │ 0.0.0.0                   │
+     ├─────────────────────────────────────────┤
+     │ TELEGRAM_BOT_TOKEN │ your_bot_token     │
+     ├─────────────────────────────────────────┤
+     │ TELEGRAM_ADMIN_ID  │ your_admin_id      │
+     └─────────────────────────────────────────┘
+
+  5. Click "Save"
+  
+  Railway automatically restarts your app with new variables!
+
+
+STEP 8️⃣: Access Your Service
+───────────────────────────────────────────────────────────────────────────────
+
+After deployment is complete:
+
+Railway gives you a public URL. Find it in:
+  Dashboard → Your Project → "Public Domain"
+
+Example:
+  https://nonrootvps-railway-prod.up.railway.app
+
+Your mitmproxy service is accessible at:
+  https://nonrootvps-railway-prod.up.railway.app:8089
+
+Test it:
+  curl https://your-railway-url:8089
+
+
+STEP 9️⃣: Monitor Your App
+───────────────────────────────────────────────────────────────────────────────
+
+Dashboard features:
+
+  Logs: Click "Logs" tab to see real-time output
+  Metrics: CPU, Memory, Network usage
+  Restart: If app crashes, click "Restart"
+  Status: Green = healthy, Red = error
+
+
+═════════════════════════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+═════════════════════════════════════════════════════════════════════════════════
+
+❌ "Build failed" in Railway
+───────────────────────────────────────────────────────────────────────────────
+Check Railway Logs:
+  Dashboard → Logs tab → Look for red error messages
+
+Common causes:
+  • Missing dependencies in requirements.txt (already included ✓)
+  • Port conflicts (use PORT env var ✓)
+  • File permissions (Dockerfile handles this ✓)
+
+Solution: Check logs, fix issue, push to GitHub:
+  git add .
+  git commit -m "Fix build issue"
+  git push origin main
+  Railway auto-rebuilds
+
+
+❌ "App not responding" or crashing
+───────────────────────────────────────────────────────────────────────────────
+1. Check Railway Logs for error messages
+2. Look for this line in logs:
+   "[*] Starting Mitmproxy Interceptor Server on port 8089..."
+3. If not there, something went wrong
+
+Fix:
+  • Check NONROOTVPS/main.py is not corrupted
+  • Verify requirements.txt is complete
+  • Check environment variables are set correctly
+
+
+❌ "Database not persisting"
+───────────────────────────────────────────────────────────────────────────────
+Railway's default storage is temporary. To keep database:
+
+  1. Dashboard → "Volumes" tab
+  2. Click "Add Volume"
+  3. Mount path: /tmp/nonrootvps
+  4. Size: 1GB
+  5. Save
+
+Now your database persists across restarts!
+
+
+❌ "Port 8089 already in use"
+───────────────────────────────────────────────────────────────────────────────
+Change PORT variable in Railway:
+  1. Dashboard → Variables
+  2. Change PORT to 9000 (or any free port)
+  3. Save
+  4. App restarts automatically
+
+
+═════════════════════════════════════════════════════════════════════════════════
+UPDATE & REDEPLOY
+═════════════════════════════════════════════════════════════════════════════════
+
+To update your app after initial deployment:
+
+  1. Make changes locally to any file
+  2. Commit and push to GitHub:
+
+     git add .
+     git commit -m "Update: describe your changes"
+     git push origin main
+
+  3. Railway automatically detects changes
+  4. Railway rebuilds and redeploys in 2-5 minutes
+  5. Check Logs tab to verify deployment
+
+No manual restart needed! Auto-deploy is enabled ✓
+
+
+═════════════════════════════════════════════════════════════════════════════════
+ADVANCED CONFIGURATION
+═════════════════════════════════════════════════════════════════════════════════
+
+Custom Domain (Premium Feature)
+───────────────────────────────────────────────────────────────────────────────
+Add custom domain like app.yourdomain.com:
+  Dashboard → Settings → Domains → Add Domain
+  Requires DNS configuration (see Railway docs)
+
+
+PostgreSQL Instead of SQLite
+───────────────────────────────────────────────────────────────────────────────
+For production use:
+  1. Dashboard → Add Service → PostgreSQL
+  2. Railway creates DATABASE_URL environment variable
+  3. Modify code to use PostgreSQL
+
+Benefits:
+  • Better for multiple concurrent users
+  • Auto-backups
+  • Built-in scaling
+
+
+More Compute Resources
+───────────────────────────────────────────────────────────────────────────────
+If app runs slow:
+  1. Upgrade Railway plan ($20/month)
+  2. Or optimize code for lower memory usage
+
+
+═════════════════════════════════════════════════════════════════════════════════
+IMPORTANT FILES EXPLAINED
+═════════════════════════════════════════════════════════════════════════════════
+
+Dockerfile
+───────────────────────────────────────────────────────────────────────────────
+Contains instructions for Railway to build your app:
+  • Uses Python 3.11
+  • Installs all dependencies
+  • Sets up environment
+  • Exposes port 8089
+  • Includes health checks
+
+Don't modify unless you know Docker!
+
+
+railway.json
+───────────────────────────────────────────────────────────────────────────────
+Railway configuration file:
+  • Specifies to use Dockerfile
+  • Sets start command: python3 main.py
+  • Enables auto-restart on crash
+
+Don't modify!
+
+
+.gitignore
+───────────────────────────────────────────────────────────────────────────────
+Prevents sensitive files from being pushed to GitHub:
+  • __pycache__/ (cached Python files)
+  • .env (environment secrets)
+  • *.db (local database)
+  • node_modules/
+
+Keep it! Security important.
+
+
+NONROOTVPS/requirements.txt
+───────────────────────────────────────────────────────────────────────────────
+Lists all Python dependencies needed:
+  • mitmproxy
+  • Flask (for web panel)
+  • discord.py (for bot)
+  • telegram bot library
+  • cryptography libraries
+  • etc.
+
+Already complete for NONROOTVPS ✓
+
+
+NONROOTVPS/main.py
+───────────────────────────────────────────────────────────────────────────────
+Main entry point (modified for Railway):
+  • Reads PORT from environment variable
+  • Starts mitmproxy proxy server
+  • Manages database
+  • Handles cleanup tasks
+
+Already Railway-compatible ✓
+
+
+NONROOTVPS/ifix.config.json
+───────────────────────────────────────────────────────────────────────────────
+Configuration for game mods:
+  • Enable/disable features
+  • Adjust settings (aim assist, damage, ESP, etc.)
+  • Tweak performance
+
+Customize as needed!
+
+
+═════════════════════════════════════════════════════════════════════════════════
+COST BREAKDOWN
+═════════════════════════════════════════════════════════════════════════════════
+
+Railway Pricing:
+  • Free: $5/month credit (usually enough to start)
+  • Pro: $20/month (more resources)
+  • Usage-based: You only pay for what you use
+
+Your app usage estimate:
+  • CPU: 0.1-0.5 vCPU (moderate)
+  • RAM: 200-500MB (moderate)
+  • Bandwidth: Depends on users (usually cheap)
+
+Result: Most users stay on free plan or pay $5-10/month
+
+
+═════════════════════════════════════════════════════════════════════════════════
+SUPPORT & HELP
+═════════════════════════════════════════════════════════════════════════════════
+
+Official Docs
+───────────────────────────────────────────────────────────────────────────────
+  https://docs.railway.app
+  https://railway.app/discord
+
+
+If Something Goes Wrong
+───────────────────────────────────────────────────────────────────────────────
+  1. Check Railway Logs (Dashboard → Logs)
+  2. Search error message in Railway Discord
+  3. Check GitHub for similar issues
+  4. Post in Railway Discord with logs
+
+
+═════════════════════════════════════════════════════════════════════════════════
+DEPLOYMENT CHECKLIST
+═════════════════════════════════════════════════════════════════════════════════
+
+Before pushing to GitHub:
+  ☐ All files present in folder
+  ☐ Dockerfile not modified
+  ☐ requirements.txt complete
+  ☐ NONROOTVPS/ folder intact
+  ☐ No .env or secrets in files
+
+Before deploying on Railway:
+  ☐ GitHub repository created
+  ☐ Files pushed to GitHub
+  ☐ Railway account created
+  ☐ Project connected to GitHub repo
+
+After deployment:
+  ☐ Build completed successfully (check Logs)
+  ☐ Environment variables set
+  ☐ No errors in deployment logs
+  ☐ Can access service on port 8089
+  ☐ Database volume added (if using SQLite)
+
+Ready to go live! 🎉
+
+
+═════════════════════════════════════════════════════════════════════════════════
+
+Good luck deploying! You've got everything you need! 💪
+
+Questions? Check README.md for more details or Railway Discord for community support.
+
+Happy hosting! 🚀
