@@ -1,0 +1,178 @@
+{
+  "framework": {
+    "name": "NoRoot Mod Proxy — Packet Injection & Mod Engine",
+    "version": "5.2.0-ULTRA",
+    "build": "2026.08.PRO",
+    "author": "Pmm Corporation — NoRoot Mod Dev Labs",
+    "product_label": "NONROOTVPS",
+    "injection_method": "NONROOT_MOD_PROXY_INJECTION",
+    "status": "MOD_ENGINE_ACTIVE"
+  },
+  "nonroot_mod_proxy": {
+    "enabled": true,
+    "description": "Intercepts, modifies, and injects custom game packet payloads & memory mods without requiring root access",
+    "proxy_engine": "NONROOT_VPN_SOCKET_HOOK",
+    "listen_host": "0.0.0.0",
+    "listen_port": 8089,
+    "ssl_kill_switch": true,
+    "fake_root_flag": false,
+    "tunnel_mode": "TUN_LAYER_REDIRECT",
+    "mod_pipeline": [
+      "LAYER_1_NONROOT_VPN_INTERFACE",
+      "LAYER_2_PACKET_FILTER_AND_DECRYPT",
+      "LAYER_3_DYNAMIC_MOD_INJECTION",
+      "LAYER_4_RESPONSE_SPOOFING",
+      "LAYER_5_SECURE_FORWARDING"
+    ]
+  },
+  "game_mod_features": {
+    "auto_aim_assist_packet": {
+      "enabled": true,
+      "inject_type": "PACKET_DELTA_MOD",
+      "fov_angle": 180,
+      "prediction_rate": "99.8%",
+      "inject_channel": "UDP_SYNC_BUFFER"
+    },
+    "high_damage_multiplier": {
+      "enabled": true,
+      "multiplier": "2.5x",
+      "inject_type": "VALUE_MOD",
+      "target_stream": "HIT_REGISTER_EVENT"
+    },
+    "esp_packet_stream": {
+      "enabled": true,
+      "entity_radar": true,
+      "distance_meter": true,
+      "loot_filter": true,
+      "stream_overlay": "NONROOT_VIRTUAL_DISPLAY"
+    },
+    "speed_packet_acceleration": {
+      "enabled": true,
+      "rate": "1.8x",
+      "anti_rollback_guard": true
+    },
+    "magic_bullet_penetration": {
+      "enabled": true,
+      "trace_wall_bypass": true
+    }
+  },
+  "injection_settings": {
+    "enabled": true,
+    "mode": "NONROOT_MOD_PROXY_INJECTION",
+    "target_package": "com.dts.freefireth",
+    "target_package_max": "com.dts.freefiremax",
+    "arch": "ARM64_V8A",
+    "auto_hook_on_start": true,
+    "anti_ban_guard": {
+      "memory_cloaking": true,
+      "crc_bypass": true,
+      "syscall_obfuscation": true,
+      "heartbeat_spoofing": true,
+      "tamper_detection_nullify": true,
+      "vpn_detection_bypass": true,
+      "anti_cheat_blackhole": true
+    }
+  },
+  "memory_patches": [
+    {
+      "module": "libil2cpp.so",
+      "hook_name": "GameCore_ModHandler",
+      "offset": "0x1C4A310",
+      "original_bytes": "FF 83 00 D1 F4 4F 01 A9",
+      "patch_bytes": "20 00 80 52 C0 03 5F D6",
+      "inject_via": "NONROOT_MOD_PROXY",
+      "description": "Injects custom Mod Menu features via non-root proxy flow"
+    },
+    {
+      "module": "libil2cpp.so",
+      "hook_name": "WeaponController_ApplySpread",
+      "offset": "0x2A99E40",
+      "original_bytes": "F6 57 BD A9 F4 4F 01 A9",
+      "patch_bytes": "1F 20 03 D5 1F 20 03 D5",
+      "inject_via": "NONROOT_MOD_PROXY",
+      "description": "Modifies bullet spread and recoil through packet intercept"
+    },
+    {
+      "module": "libunity.so",
+      "hook_name": "PlayerPhysics_UpdateVelocity",
+      "offset": "0x0B8E440",
+      "original_bytes": "E0 03 1F 32 C0 03 5F D6",
+      "patch_bytes": "E0 03 1F 32 1F 20 03 D5",
+      "inject_via": "NONROOT_MOD_PROXY",
+      "description": "Applies speed & high jump mod parameters without device root"
+    },
+    {
+      "module": "libanogs.so",
+      "hook_name": "AnoSDK_ReportViolation",
+      "offset": "0x0045A90",
+      "original_bytes": "08 00 00 94 00 00 80 52",
+      "patch_bytes": "C0 03 5F D6 1F 20 03 D5",
+      "inject_via": "NONROOT_MOD_PROXY",
+      "description": "Blocks telemetry and anti-cheat packet inspection"
+    }
+  ],
+  "protocol_injection": {
+    "proto_engine": "CrEaTe_ProTo_V2",
+    "inject_method": "NONROOT_MOD_PROXY_INJECTION",
+    "encryption": {
+      "cipher": "AES-128-CBC",
+      "dynamic_key_swap": true,
+      "seed_key": [89, 103, 38, 116, 99, 37, 68, 69, 117, 104, 54, 37, 90, 99, 94, 56],
+      "seed_iv": [54, 111, 121, 90, 68, 114, 50, 50, 69, 51, 121, 99, 104, 106, 77, 37]
+    },
+    "dynamic_fields_injection": {
+      "field_1": {
+        "wire_type": 0,
+        "inject_type": "OVERWRITE_HEX",
+        "inject_via": "NONROOT_MOD_PROXY",
+        "value": "AUTO_MATCH_CLIENT_SESSION"
+      },
+      "field_3": {
+        "wire_type": 2,
+        "inject_type": "MOD_PAYLOAD_ATTACH",
+        "inject_via": "NONROOT_MOD_PROXY",
+        "value": "7365637572655f6d6f645f7061796c6f6164"
+      },
+      "field_8": {
+        "wire_type": 0,
+        "inject_type": "DAMAGE_BOOST_FLAG",
+        "inject_via": "NONROOT_MOD_PROXY",
+        "value": 1
+      },
+      "field_12": {
+        "wire_type": 2,
+        "inject_type": "GEO_LOCATION_OVERRIDE",
+        "inject_via": "NONROOT_MOD_PROXY",
+        "value": "{\"region\":\"IND\",\"server_zone\":\"AUTO\",\"anti_block\":1,\"mod_active\":true}"
+      }
+    }
+  },
+  "traffic_interceptor": {
+    "listen_port": 8089,
+    "proxy_type": "NONROOT_LOCAL_MOD_VPN",
+    "proxy_redirect": true,
+    "ssl_unpinning": true,
+    "rules": [
+      {
+        "host_pattern": ".*\\.freefiremobile\\.com",
+        "action": "INJECT_MOD_PAYLOAD",
+        "target_endpoint": "/api/client/gameplay",
+        "inject_payload": "GAME_MOD_PROTO_STREAM",
+        "inject_method": "NONROOT_MOD_PROXY_INJECTION"
+      },
+      {
+        "host_pattern": ".*\\.garena\\.com",
+        "action": "AUTO_BYPASS_AND_INJECT",
+        "target_endpoint": "/auth/session",
+        "inject_payload": "SESSION_MOD_PROTO",
+        "inject_method": "NONROOT_MOD_PROXY_INJECTION"
+      }
+    ]
+  },
+  "debug_logs": {
+    "verbose_injection": true,
+    "dump_injected_packets": false,
+    "console_color": true,
+    "log_level": "DEBUG"
+  }
+}
