@@ -30,7 +30,7 @@ print(f"    - Listen Host: {RAILWAY_HOST}")
 print(f"    - Listen Port: {RAILWAY_PORT}")
 print(f"    - Database Path: {DB_FILE}")
 
-# ============ FLASK WEB SERVER (For HTTP Responses) ============
+# ============ FLASK APP (For gunicorn) ============
 app = Flask(__name__)
 
 @app.route('/')
@@ -46,7 +46,6 @@ def home():
 
 @app.route('/version')
 def version():
-    # Free Fire may check this endpoint
     return jsonify({
         "version": "5.2.0",
         "status": "ok",
@@ -69,10 +68,6 @@ def catch_all(path):
         "path": path,
         "message": "NONROOTVPS proxy is active"
     })
-
-def start_web_server():
-    print(f"[*] Starting Web Server on port {RAILWAY_PORT}")
-    app.run(host='0.0.0.0', port=RAILWAY_PORT, debug=False, use_reloader=False)
 
 # ============ DATABASE FUNCTIONS ============
 def init_db():
@@ -162,18 +157,10 @@ if __name__ == "__main__":
     print("[*] Starting services...")
     print("[*] ═══════════════════════════════════════")
     
-    # Start web server for HTTP responses
-    web_thread = threading.Thread(target=start_web_server, daemon=True)
-    web_thread.start()
-    print(f"[*] Web server started on port {RAILWAY_PORT}")
-    
     # Start cleanup thread
     threading.Thread(target=cleanup_expired_sessions, daemon=True).start()
     
     sub_processes = start_subservices()
-    
-    # Wait a moment for web server to start
-    time.sleep(2)
     
     print(f"[*] Starting Mitmproxy Interceptor Server on port {RAILWAY_PORT}...")
     try:
