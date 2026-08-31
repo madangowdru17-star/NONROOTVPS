@@ -4,15 +4,8 @@
     "builder": "dockerfile"
   },
   "deploy": {
-    "startCommand": "python3 main.py",
+    "startCommand": "sh -c 'gunicorn --bind 0.0.0.0:8080 wsgi:app & python3 main.py'",
     "restartPolicyType": "on_failure",
-    "restartPolicyMaxRetries": 5,
-    "ports": [
-      {
-        "port": 8080,
-        "protocol": "tcp",
-        "expose": true
-      }
-    ]
+    "restartPolicyMaxRetries": 5
   }
 }
