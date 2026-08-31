@@ -15,8 +15,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY NONROOTVPS/ .
 
-# Expose both ports
-EXPOSE 8080
-EXPOSE 8081
+# Create wsgi.py for gunicorn
+RUN echo "from main import app" > wsgi.py
 
-CMD ["python3", "main.py"]
+EXPOSE 8080
+
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:8080 wsgi:app & python3 main.py"]
