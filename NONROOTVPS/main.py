@@ -17,7 +17,8 @@ from common.utils import aes_decrypt, encrypt_api, get_available_room, CrEaTe_Pr
 from common.ifix_injector import injector
 
 # ============ RAILWAY CONFIGURATION ============
-RAILWAY_PORT = int(os.getenv('PORT', 8080))
+WEB_PORT = int(os.getenv('PORT', 8080))
+PROXY_PORT = int(os.getenv('PROXY_PORT', 8081))
 RAILWAY_HOST = os.getenv('RAILWAY_HOST', '0.0.0.0')
 DB_PATH = os.getenv('DB_PATH', '/tmp/nonrootvps')
 
@@ -26,8 +27,8 @@ Path(DB_PATH).mkdir(parents=True, exist_ok=True)
 DB_FILE = os.path.join(DB_PATH, "ifix_data.db")
 
 print(f"[*] Railway Configuration:")
-print(f"    - Listen Host: {RAILWAY_HOST}")
-print(f"    - Listen Port: {RAILWAY_PORT}")
+print(f"    - Web Server Port: {WEB_PORT}")
+print(f"    - Proxy Port: {PROXY_PORT}")
 print(f"    - Database Path: {DB_FILE}")
 
 # ============ FLASK APP ============
@@ -69,8 +70,8 @@ def catch_all(path):
     })
 
 def start_web_server():
-    print(f"[*] Starting Web Server on {RAILWAY_HOST}:{RAILWAY_PORT}")
-    app.run(host=RAILWAY_HOST, port=RAILWAY_PORT, debug=False, use_reloader=False, threaded=True)
+    print(f"[*] Starting Web Server on {RAILWAY_HOST}:{WEB_PORT}")
+    app.run(host=RAILWAY_HOST, port=WEB_PORT, debug=False, use_reloader=False, threaded=True)
 
 # ============ DATABASE FUNCTIONS ============
 def init_db():
@@ -145,10 +146,10 @@ def start_subservices():
 # ============ MITMPROXY ============
 def start_mitm():
     script_path = os.path.abspath(__file__).replace('\\', '\\\\')
-    print(f"[*] Starting Mitmproxy on {RAILWAY_HOST}:{RAILWAY_PORT}")
+    print(f"[*] Starting Mitmproxy on {RAILWAY_HOST}:{PROXY_PORT}")
     subprocess.run([
         sys.executable, "-c",
-        f"import sys; from mitmproxy.tools.main import mitmdump; sys.argv = ['mitmdump', '-s', '{script_path}', '-p', '{RAILWAY_PORT}', '--listen-host', '{RAILWAY_HOST}', '--set', 'block_global=false', '--set', 'ignore_hosts=^(version|freefiremobile-a|cdp|config|rslw0r|firebase).*']; mitmdump()"
+        f"import sys; from mitmproxy.tools.main import mitmdump; sys.argv = ['mitmdump', '-s', '{script_path}', '-p', '{PROXY_PORT}', '--listen-host', '{RAILWAY_HOST}', '--set', 'block_global=false', '--set', 'ignore_hosts=^(version|freefiremobile-a|cdp|config|rslw0r|firebase).*']; mitmdump()"
     ])
 
 # ============ MAIN ============
@@ -163,7 +164,7 @@ if __name__ == "__main__":
     # Start web server thread
     web_thread = threading.Thread(target=start_web_server, daemon=True)
     web_thread.start()
-    print(f"[*] Web server started on port {RAILWAY_PORT}")
+    print(f"[*] Web server started on port {WEB_PORT}")
     
     # Start cleanup thread
     threading.Thread(target=cleanup_expired_sessions, daemon=True).start()
@@ -172,7 +173,7 @@ if __name__ == "__main__":
     
     time.sleep(2)
     
-    print(f"[*] Starting Mitmproxy Interceptor Server on port {RAILWAY_PORT}...")
+    print(f"[*] Starting Mitmproxy Interceptor Server on port {PROXY_PORT}...")
     try:
         start_mitm()
     finally:
