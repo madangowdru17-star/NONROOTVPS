@@ -19,7 +19,6 @@ from common.ifix_injector import injector
 # ============ RAILWAY CONFIGURATION ============
 WEB_PORT = 8080
 PROXY_PORT = 8081
-RAILWAY_HOST = '0.0.0.0'
 DB_PATH = os.getenv('DB_PATH', '/tmp/nonrootvps')
 
 # Create temp directory for Railway persistent storage
@@ -69,10 +68,6 @@ def catch_all(path):
         "path": path,
         "message": "NONROOTVPS proxy is active"
     })
-
-def start_web_server():
-    print(f"[*] Starting Web Server on 0.0.0.0:{WEB_PORT}")
-    app.run(host='0.0.0.0', port=WEB_PORT, debug=False, use_reloader=False, threaded=True)
 
 # ============ DATABASE FUNCTIONS ============
 def init_db():
@@ -162,17 +157,13 @@ if __name__ == "__main__":
     print("[*] Starting services...")
     print("[*] ═══════════════════════════════════════")
     
-    # Start web server thread
-    web_thread = threading.Thread(target=start_web_server, daemon=True)
-    web_thread.start()
-    print(f"[*] Web server started on port {WEB_PORT}")
-    
     # Start cleanup thread
     threading.Thread(target=cleanup_expired_sessions, daemon=True).start()
     
     sub_processes = start_subservices()
     
-    time.sleep(2)
+    # Wait for gunicorn to start (it runs in background)
+    time.sleep(3)
     
     print(f"[*] Starting Mitmproxy Interceptor Server on port {PROXY_PORT}...")
     try:
