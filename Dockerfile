@@ -15,6 +15,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY NONROOTVPS/ .
 
+# Create wsgi.py for gunicorn
+RUN echo "from main import app" > wsgi.py
+
 EXPOSE 8080
 
-CMD ["python3", "main.py"]
+# Start both gunicorn (web) and main.py (mitmproxy)
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:8080 wsgi:app & python3 main.py"]
