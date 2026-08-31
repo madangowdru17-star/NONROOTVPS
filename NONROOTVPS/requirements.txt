@@ -22,7 +22,6 @@ kaitaistruct>=0.10
 ldap3>=2.9.1
 MarkupSafe>=2.1.5
 mitmproxy>=11.0.0
-# mitmproxy_rs is automatically pulled by mitmproxy - no need to specify it
 msgpack>=1.1.0
 passlib>=1.7.4
 protobuf>=5.28.0
@@ -37,7 +36,7 @@ pyparsing>=3.1.4
 pyperclip>=1.9.0
 requests>=2.32.0
 discord.py>=2.4.0
-ruamel.yaml>=0.18.10
+ruamel.yaml>=0.16,<=0.18.6
 ruamel.yaml.clib>=0.2.8
 service-identity>=24.1.0
 setuptools>=75.0.0
