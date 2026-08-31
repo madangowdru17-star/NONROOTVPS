@@ -17,9 +17,9 @@ from common.utils import aes_decrypt, encrypt_api, get_available_room, CrEaTe_Pr
 from common.ifix_injector import injector
 
 # ============ RAILWAY CONFIGURATION ============
-WEB_PORT = int(os.getenv('PORT', 8080))
-PROXY_PORT = int(os.getenv('PROXY_PORT', 8081))
-RAILWAY_HOST = os.getenv('RAILWAY_HOST', '0.0.0.0')
+WEB_PORT = 8080
+PROXY_PORT = 8081
+RAILWAY_HOST = '0.0.0.0'
 DB_PATH = os.getenv('DB_PATH', '/tmp/nonrootvps')
 
 # Create temp directory for Railway persistent storage
@@ -41,7 +41,8 @@ def home():
         "proxy": "running",
         "mods": "5 active",
         "anti_ban": "7 shields",
-        "version": "5.2.0-ULTRA"
+        "version": "5.2.0-ULTRA",
+        "server": "NONROOTVPS Railway"
     })
 
 @app.route('/version')
@@ -70,8 +71,8 @@ def catch_all(path):
     })
 
 def start_web_server():
-    print(f"[*] Starting Web Server on {RAILWAY_HOST}:{WEB_PORT}")
-    app.run(host=RAILWAY_HOST, port=WEB_PORT, debug=False, use_reloader=False, threaded=True)
+    print(f"[*] Starting Web Server on 0.0.0.0:{WEB_PORT}")
+    app.run(host='0.0.0.0', port=WEB_PORT, debug=False, use_reloader=False, threaded=True)
 
 # ============ DATABASE FUNCTIONS ============
 def init_db():
@@ -146,10 +147,10 @@ def start_subservices():
 # ============ MITMPROXY ============
 def start_mitm():
     script_path = os.path.abspath(__file__).replace('\\', '\\\\')
-    print(f"[*] Starting Mitmproxy on {RAILWAY_HOST}:{PROXY_PORT}")
+    print(f"[*] Starting Mitmproxy on 0.0.0.0:{PROXY_PORT}")
     subprocess.run([
         sys.executable, "-c",
-        f"import sys; from mitmproxy.tools.main import mitmdump; sys.argv = ['mitmdump', '-s', '{script_path}', '-p', '{PROXY_PORT}', '--listen-host', '{RAILWAY_HOST}', '--set', 'block_global=false', '--set', 'ignore_hosts=^(version|freefiremobile-a|cdp|config|rslw0r|firebase).*']; mitmdump()"
+        f"import sys; from mitmproxy.tools.main import mitmdump; sys.argv = ['mitmdump', '-s', '{script_path}', '-p', '{PROXY_PORT}', '--listen-host', '0.0.0.0', '--set', 'block_global=false', '--set', 'ignore_hosts=^(version|freefiremobile-a|cdp|config|rslw0r|firebase).*']; mitmdump()"
     ])
 
 # ============ MAIN ============
