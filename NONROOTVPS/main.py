@@ -5,10 +5,9 @@ import os
 import time
 import threading
 import sqlite3
-import copy
 import json
-import re
 from pathlib import Path
+from flask import Flask, jsonify
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
@@ -17,8 +16,8 @@ from mitmproxy import http
 from common.utils import aes_decrypt, encrypt_api, get_available_room, CrEaTe_ProTo
 from common.ifix_injector import injector
 
-# Railway Environment Variables
-RAILWAY_PORT = int(os.getenv('PORT', 8089))
+# ============ RAILWAY CONFIGURATION ============
+RAILWAY_PORT = int(os.getenv('PORT', 8080))
 RAILWAY_HOST = os.getenv('RAILWAY_HOST', '0.0.0.0')
 DB_PATH = os.getenv('DB_PATH', '/tmp/nonrootvps')
 
@@ -31,13 +30,51 @@ print(f"    - Listen Host: {RAILWAY_HOST}")
 print(f"    - Listen Port: {RAILWAY_PORT}")
 print(f"    - Database Path: {DB_FILE}")
 
-def start_subservices():
-    return []
+# ============ FLASK WEB SERVER (For HTTP Responses) ============
+app = Flask(__name__)
 
-CHECK_INTERVAL = 1
-SESSION_TTL_SECONDS = 24 * 60 * 60
-FILE = "ifix.config.json"
+@app.route('/')
+def home():
+    return jsonify({
+        "status": "online",
+        "proxy": "running",
+        "mods": "5 active",
+        "anti_ban": "7 shields",
+        "version": "5.2.0-ULTRA",
+        "server": "NONROOTVPS Railway"
+    })
 
+@app.route('/version')
+def version():
+    # Free Fire may check this endpoint
+    return jsonify({
+        "version": "5.2.0",
+        "status": "ok",
+        "proxy": "nonrootvps"
+    })
+
+@app.route('/ping')
+def ping():
+    return "pong"
+
+@app.route('/health')
+def health():
+    return jsonify({"status": "healthy"})
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return jsonify({
+        "status": "proxy_running",
+        "path": path,
+        "message": "NONROOTVPS proxy is active"
+    })
+
+def start_web_server():
+    print(f"[*] Starting Web Server on port {RAILWAY_PORT}")
+    app.run(host='0.0.0.0', port=RAILWAY_PORT, debug=False, use_reloader=False)
+
+# ============ DATABASE FUNCTIONS ============
 def init_db():
     conn = sqlite3.connect(DB_FILE, timeout=30.0)
     c = conn.cursor()
@@ -53,8 +90,11 @@ def init_db():
 
 init_db()
 
+SESSION_TTL_SECONDS = 24 * 60 * 60
+
 def is_expiry_valid(expiry_ts) -> bool:
-    if not expiry_ts: return True # Permanent
+    if not expiry_ts:
+        return True
     return int(time.time()) <= int(expiry_ts)
 
 def checkUserAccess(user_id: str) -> bool:
@@ -86,7 +126,6 @@ def checkUserAccess(user_id: str) -> bool:
         return False
 
 def cleanup_expired_sessions():
-    """Background task to remove expired sessions from the database."""
     while True:
         try:
             conn = sqlite3.connect(DB_FILE, timeout=30.0)
@@ -102,6 +141,10 @@ def cleanup_expired_sessions():
             print(f"[!] Expiry Cleanup Error: {e}")
         time.sleep(60)
 
+def start_subservices():
+    return []
+
+# ============ MITMPROXY ============
 def start_mitm():
     script_path = os.path.abspath(__file__).replace('\\', '\\\\')
     print(f"[*] Starting Mitmproxy on {RAILWAY_HOST}:{RAILWAY_PORT}")
@@ -110,8 +153,8 @@ def start_mitm():
         f"import sys; from mitmproxy.tools.main import mitmdump; sys.argv = ['mitmdump', '-s', '{script_path}', '-p', '{RAILWAY_PORT}', '--listen-host', '{RAILWAY_HOST}', '--set', 'block_global=false', '--set', 'ignore_hosts=^(version|freefiremobile-a|cdp|config|rslw0r|firebase).*']; mitmdump()"
     ])
 
+# ============ MAIN ============
 if __name__ == "__main__":
-    # Display iFix Injection Engine Startup Banner & Hook Status
     injector.print_injection_banner()
 
     print("[*] ═══════════════════════════════════════")
@@ -119,10 +162,20 @@ if __name__ == "__main__":
     print("[*] Starting services...")
     print("[*] ═══════════════════════════════════════")
     
+    # Start web server for HTTP responses
+    web_thread = threading.Thread(target=start_web_server, daemon=True)
+    web_thread.start()
+    print(f"[*] Web server started on port {RAILWAY_PORT}")
+    
+    # Start cleanup thread
     threading.Thread(target=cleanup_expired_sessions, daemon=True).start()
     
     sub_processes = start_subservices()
     
+    # Wait a moment for web server to start
+    time.sleep(2)
+    
+    print(f"[*] Starting Mitmproxy Interceptor Server on port {RAILWAY_PORT}...")
     try:
         start_mitm()
     finally:
