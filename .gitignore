@@ -1,74 +1,57 @@
-# Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
-env/
+*.db
+*.sqlite3
+.env
+.venv
 venv/
 ENV/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-ifix_data.db
-
-# Environment
-.env
-.env.local
-.env.*.local
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Railway
-.railway/
-railway.json.local
-
-# Logs
+env/
 *.log
-logs/
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Node (if using npm)
-node_modules/
-npm-debug.log
-
-# Temporary
-*.tmp
-*.temp
-tmp/
-temp/
-
-# OS
 .DS_Store
-Thumbs.db
-
-# mitmproxy
-.mitmproxy/
-mitmproxy_certs/
+*.webp
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.avi
+*.mkv
+*.mov
+*.wmv
+*.flv
+*.webm
+*.m4v
+*.mpg
+*.mpeg
+*.ts
+*.m3u8
+*.m3u
+*.pls
+*.wpl
+*.zpl
+*.ppl
+*.asx
+*.xspf
+*.ifo
+*.vob
+*.idx
+*.sub
+*.srt
+*.ssa
+*.ass
+*.lrc
+*.vtt
+*.ttml
+*.dfxp
+*.smi
+*.sami
+*.rt
+*.txt
+*.md
+*.markdown
+*.rst
+*.log
